@@ -1,7 +1,7 @@
 # Личный проект «Типотека» [![Build status][travis-image]][travis-url]
 
 * Студент: [Саша Джинн](https://up.htmlacademy.ru/nodejs/3/user/354189).
-* Наставник: [Алексей Пан](https://htmlacademy.ru/profile/id1437965).
+* Наставник: [Юрий Кучма](https://htmlacademy.ru/profile/krabaton).
 
 ---
 
