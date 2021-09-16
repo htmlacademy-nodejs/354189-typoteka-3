@@ -8,8 +8,6 @@ const userArguments = process.argv.slice(USER_ARGV_INDEX);
 const [userCommand] = userArguments;
 const currentUserCommand = Cli[userCommand];
 
-console.log(`cli`, Cli);
-console.log(`userArguments`, userArguments);
 if (userArguments.length === 0 || !currentUserCommand) {
   Cli[DEFAULT_COMMAND].run();
   process.exit(ExitCode.SUCCESS);
