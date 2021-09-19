@@ -1,5 +1,7 @@
 "use strict";
 
+const chalk = require(`chalk`);
+
 const {UserCommand} = require(`../../constants/user-command`);
 
 const HELP_INFO = `
@@ -16,6 +18,6 @@ const HELP_INFO = `
 module.exports = {
   name: UserCommand.HELP,
   run() {
-    console.info(HELP_INFO);
+    console.info(chalk.gray(HELP_INFO));
   },
 };
