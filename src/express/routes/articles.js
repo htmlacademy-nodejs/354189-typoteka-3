@@ -3,7 +3,7 @@ const {Router} = require(`express`);
 const articlesRouter = new Router();
 
 articlesRouter.get(`/:id`, (req, res) =>
-  res.send(`/articles/${req.params.id}`)
+  res.render(`aticles-by-category`, {headerType: `auth`, isColoredBackground: true})
 );
 
 articlesRouter.get(`/add`, (req, res) => res.send(`/articles/add`));

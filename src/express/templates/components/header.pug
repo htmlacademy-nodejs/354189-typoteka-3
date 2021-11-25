@@ -1,0 +1,12 @@
+header.header
+  a.header__logo.header__logo--500.logo(href='#')
+    img(src='img/icons/logo.svg' alt='логотип Тайпотеки')
+
+  if headerType === 'auth'
+    include header-nav-auth.pug
+  else if headerType === 'user'
+    include header-nav-user.pug
+  else
+    include header-nav-search.pug
+
+  a.header__search.button.button--search(href='#' aria-label='поиск по сайту')
