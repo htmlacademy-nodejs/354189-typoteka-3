@@ -3,13 +3,15 @@ const {Router} = require(`express`);
 const articlesRouter = new Router();
 
 articlesRouter.get(`/:id`, (req, res) =>
-  res.render(`aticles-by-category`, {headerType: `auth`, isColoredBackground: true})
+  res.render(`post-detail`, {headerType: `admin`})
 );
 
-articlesRouter.get(`/add`, (req, res) => res.send(`/articles/add`));
+articlesRouter.get(`/add`, (req, res) =>
+  res.render(`new-post`, {headerType: `auth`})
+);
 
 articlesRouter.get(`/category/:id`, (req, res) =>
-  res.send(`/articles/category/${req.params.id}`)
+  res.render(`aticles-by-category`, {headerType: `auth`})
 );
 
 articlesRouter.get(`/edit/:id`, (req, res) =>

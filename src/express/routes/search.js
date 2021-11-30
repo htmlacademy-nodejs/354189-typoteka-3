@@ -2,6 +2,6 @@
 const {Router} = require(`express`);
 const searchRouter = new Router();
 
-searchRouter.get(`/`, (req, res) => res.render(`search`, {headerType: `auth`, isColoredBackground: true}));
+searchRouter.get(`/`, (req, res) => res.render(`admin`, {headerType: `admin`}));
 
 module.exports = searchRouter;
