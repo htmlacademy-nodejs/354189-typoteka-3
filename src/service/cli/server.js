@@ -1,62 +1,35 @@
 "use strict";
 
+const express = require(`express`);
 const chalk = require(`chalk`);
-const http = require(`http`);
 const fs = require(`fs`).promises;
 
 const {UserCommand} = require(`../../constants/user-command`);
-const {HttpCode} = require(`../../constants/app`);
 
 const DEFAULT_PORT = 3000;
 const FILENAME = `mocks.json`;
 
-const sendResponse = (res, statusCode, message) => {
-  const template = `
-    <!Doctype html>
-      <html lang="ru">
-      <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      </head>
-      <body>${message}</body>
-    </html>`.trim();
+const app = express();
+const postsRouter = new express.Router();
 
-  res.writeHead(statusCode, {
-    "Content-Type": `text/html; charset=UTF-8`,
-  });
+app.use(express.urlencoded({extended: false}));
 
-  res.end(template);
-};
-
-const routeHandler = {
-  "/": async (_, res) => {
-    try {
-      const fileContent = await fs.readFile(FILENAME);
-      const mocks = JSON.parse(fileContent);
-      const listItems = mocks.map((post) => `<li>${post.title}</li>`).join(``);
-      sendResponse(res, HttpCode.OK, `<ul>${listItems}</ul>`);
-    } catch (err) {
-      throw new Error(`Error with read file`);
-    }
-  },
-};
-
-const onClientConnect = async (req, res) => {
-  const notFoundMessageText = `Not found`;
-
-  const handler = routeHandler[req.url];
-  if (!handler) {
-    sendResponse(res, HttpCode.NOT_FOUND, notFoundMessageText);
-    return;
-  }
-
+postsRouter.get(`/`, async (_, res) => {
   try {
-    await handler(req, res);
+    const fileContent = await fs.readFile(FILENAME);
+    const mocks = JSON.parse(fileContent);
+    res.send(mocks);
   } catch (err) {
-    sendResponse(res, HttpCode.NOT_FOUND, notFoundMessageText);
+    res.send([]);
   }
-};
+});
+
+app.use(`/posts`, postsRouter);
+
+app.use((_, res) => {
+  res.status(404);
+  return res.send(`This route not found`);
+});
 
 module.exports = {
   name: UserCommand.SERVER,
@@ -64,14 +37,8 @@ module.exports = {
     const [customPort] = args;
     const port = Number.parseInt(customPort, 10) || DEFAULT_PORT;
 
-    http
-      .createServer(onClientConnect)
-      .listen(port)
-      .on(`listening`, () => {
-        console.info(chalk.green(`Ожидаю соединений на ${port}`));
-      })
-      .on(`error`, ({message}) => {
-        console.error(chalk.red(`Ошибка при создании сервера: ${message}`));
-      });
+    app.listen(port, () =>
+      console.info(chalk.green(`Ожидаю соединений на ${port}`))
+    );
   },
 };
