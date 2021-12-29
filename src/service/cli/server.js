@@ -2,29 +2,20 @@
 
 const express = require(`express`);
 const chalk = require(`chalk`);
-const fs = require(`fs`).promises;
 
 const {UserCommand} = require(`../../constants/user-command`);
+const {API_PREFIX} = require(`../../constants/app`);
+const api = require(`../api`);
 
 const DEFAULT_PORT = 3000;
-const FILENAME = `mocks.json`;
 
 const app = express();
-const postsRouter = new express.Router();
 
 app.use(express.urlencoded({extended: false}));
 
-postsRouter.get(`/`, async (_, res) => {
-  try {
-    const fileContent = await fs.readFile(FILENAME);
-    const mocks = JSON.parse(fileContent);
-    res.send(mocks);
-  } catch (err) {
-    res.send([]);
-  }
-});
-
-app.use(`/posts`, postsRouter);
+Object.entries(api).forEach(([route, router]) =>
+  app.use(`${API_PREFIX}${route}`, router)
+);
 
 app.use((_, res) => {
   res.status(404);

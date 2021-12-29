@@ -15,8 +15,24 @@ const HttpCode = {
   UNAUTHORIZED: 401,
 };
 
+const CategoryToId = {
+  "Деревья": 0,
+  "За жизнь": 1,
+  "Без рамки": 2,
+  "Разное": 3,
+  "IT": 4,
+  "Музыка": 5,
+  "Кино": 6,
+  "Программирование": 7,
+  "Железо": 8,
+};
+
+const API_PREFIX = `/api`;
+
 module.exports = {
   USER_ARGV_INDEX,
   ExitCode,
   HttpCode,
+  CategoryToId,
+  API_PREFIX,
 };
