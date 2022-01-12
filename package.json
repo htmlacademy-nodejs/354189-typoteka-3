@@ -4,8 +4,9 @@
   "description": "Типотека",
   "main": "./src/service/service.js",
   "scripts": {
-    "test": "npm run eslint",
     "eslint": "eslint --ext .js src/",
+    "jest": "jest",
+    "test": "npm run eslint && npm run jest",
     "start": "nodemon ./src/service/service.js --server 3000",
     "start-front-serve": "nodemon ./src/express/express.js"
   },
@@ -22,8 +23,10 @@
   "devDependencies": {
     "eslint": "7.31.0",
     "eslint-config-htmlacademy": "0.6.0",
+    "jest": "27.4.7",
     "nanoid": "3.1.30",
-    "nodemon": "2.0.13"
+    "nodemon": "2.0.13",
+    "supertest": "6.2.0"
   },
   "dependencies": {
     "chalk": "4.1.2",

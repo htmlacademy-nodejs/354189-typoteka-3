@@ -1,17 +1,27 @@
 "use strict";
 const {Router} = require(`express`);
-const Search = require(`../services/Search`);
-const searchRouter = new Router();
+const {HttpCode} = require(`../../constants/app`);
 
-searchRouter.get(`/`, async (req, res) => {
-  console.log(`/api/search?query=`);
-  try {
-    const articles = await Search.search(`asd asd asd`);
-    res.send(articles);
-  } catch (e) {
-    res.status(422);
-    res.send(`Error: ${e}`);
-  }
-});
+const createSearchRouter = ({parent, searchService}) => {
+  const router = new Router();
+  parent.use(`/search`, router);
 
-module.exports = searchRouter;
+  router.get(`/`, async (req, res) => {
+    const {query} = req.query;
+
+    if (!query) {
+      res.status(HttpCode.BAD_REQUEST).json([]);
+      return;
+    }
+
+    try {
+      const articles = await searchService.search(query);
+      res.send(articles);
+    } catch (e) {
+      res.status(422);
+      res.send(`Error: ${e}`);
+    }
+  });
+};
+
+module.exports = {createSearchRouter};

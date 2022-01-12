@@ -1,32 +1,24 @@
 "use strict";
 
-const {
-  mapAtricles,
-  getMockData,
-  makeDraftArticle,
-  makeDraftComment,
-} = require(`./helpers`);
+const {mapAtricles, makeDraftArticle, makeDraftComment} = require(`./helpers`);
 
-const createDataBase = () => {
+const createDataBase = (initialValue) => {
   let articles = [];
   let comments = [];
   let categories = [];
   let categoriesToArticles = [];
   let articleToComments = [];
 
-  (async () => {
-    try {
-      const mockArticles = await getMockData();
-      const mappedArticles = mapAtricles(mockArticles);
-      articles = mappedArticles.articles;
-      comments = mappedArticles.comments;
-      categories = mappedArticles.categories;
-      categoriesToArticles = mappedArticles.categoriesToArticles;
-      articleToComments = mappedArticles.articleToComments;
-    } catch (err) {
-      throw new Error(`Ошибка при инициализации базы данных:`, err);
-    }
-  })();
+  if (initialValue) {
+    const mappedArticles = mapAtricles(initialValue);
+    articles = mappedArticles.articles;
+    comments = mappedArticles.comments;
+    categories = mappedArticles.categories;
+    categoriesToArticles = mappedArticles.categoriesToArticles;
+    articleToComments = mappedArticles.articleToComments;
+  }
+
+  const isArticleExist = (id) => Boolean(articles.find((a) => a.id === id));
 
   const getArticleCategories = (articleId) => {
     const elements = categoriesToArticles.filter(
@@ -40,7 +32,7 @@ const createDataBase = () => {
 
     return cats;
   };
-  const getArticleComments = (articleId) => {
+  const getArticleFullComments = (articleId) => {
     const elements = articleToComments.filter(
         (el) => el.articleId === articleId
     );
@@ -55,25 +47,32 @@ const createDataBase = () => {
   const deleteArticleComment = (commentId) => {
     const comment = comments.find((c) => c.id === commentId);
     if (!comment) {
-      throw new Error(`Нет комментария с таким id`);
+      throw new Error(`Нет комментария с id: ${commentId}`);
     }
 
     comments = comments.filter((el) => el.commentId !== commentId);
     articleToComments = articleToComments.filter(
         (el) => el.commentId !== commentId
     );
-
-    return comments;
   };
   const clearCategoriesToArticles = (articleId) => {
     categoriesToArticles = categoriesToArticles.filter(
         (el) => el.articleId !== articleId
     );
   };
+  const clearCommentsByArticleId = (articleId) => {
+    const commentsToRemove = articleToComments.filter(
+        (el) => el.articleId === articleId
+    );
+    articleToComments = articleToComments.filter(
+        (el) => el.articleId !== articleId
+    );
+    commentsToRemove.forEach((el) => deleteArticleComment(el.commentId));
+  };
   const makeExtendedArticle = (articleId) => {
     const article = articles.find((a) => a.id === articleId);
     const category = getArticleCategories(articleId);
-    const fullComments = getArticleComments(articleId);
+    const fullComments = getArticleFullComments(articleId);
     const extendedArticle = {
       ...article,
       category: category.map((el) => el.name),
@@ -83,7 +82,7 @@ const createDataBase = () => {
   };
 
   return {
-    async getAllArticles() {
+    getAllArticles() {
       const extendedArticles = [];
 
       articles.forEach((a) => extendedArticles.push(makeExtendedArticle(a.id)));
@@ -91,63 +90,75 @@ const createDataBase = () => {
       return Promise.resolve(extendedArticles);
     },
     getArticle(articleId) {
-      const index = this.articles.findIndex((a) => a.id === articleId);
-      if (index === -1) {
-        throw new Error(`Нет статьи с таким id`);
+      if (!isArticleExist(articleId)) {
+        throw new Error(`Нет статьи с id: ${articleId}`);
       }
 
       return Promise.resolve(makeExtendedArticle(articleId));
     },
     addArticle(article) {
       const newArticle = {...makeDraftArticle(), ...article};
-      this.articles.push(newArticle);
+      articles.push(newArticle);
 
       return Promise.resolve(makeExtendedArticle(newArticle.id));
     },
     updateArticle(articleId, data) {
-      const index = this.articles.findIndex((a) => a.id === articleId);
+      const index = articles.findIndex((a) => a.id === articleId);
       if (index === -1) {
-        throw new Error(`Нет статьи с таким id`);
+        throw new Error(`Нет статьи с id: ${articleId}`);
       }
-      const article = this.articles[index];
+      const article = articles[index];
       const newArticle = {...article, ...data};
 
-      this.articles[index] = newArticle;
+      articles[index] = newArticle;
 
       return Promise.resolve(makeExtendedArticle(newArticle.id));
     },
     deleteArticle(articleId) {
-      const article = articles.find((a) => a.id === articleId);
-      if (!article) {
-        throw new Error(`Нет статьи с таким id`);
+      if (!isArticleExist(articleId)) {
+        throw new Error(`Нет статьи с id: ${articleId}`);
       }
 
-      article.comments.forEach(deleteArticleComment);
       clearCategoriesToArticles(articleId);
+      clearCommentsByArticleId(articleId);
       articles = articles.filter((a) => a.id !== articleId);
 
-      return Promise.resolve(makeExtendedArticle(articleId));
+      const extendedArticles = [];
+      articles.forEach((a) => extendedArticles.push(makeExtendedArticle(a.id)));
+      return Promise.resolve(extendedArticles);
     },
     getArticleComments(articleId) {
-      return Promise.resolve(getArticleComments(articleId));
+      if (!isArticleExist(articleId)) {
+        throw new Error(`Нет статьи с id: ${articleId}`);
+      }
+
+      const fullComments = getArticleFullComments(articleId);
+      return Promise.resolve(fullComments);
     },
-    deleteArticleComment(commentId) {
-      return Promise.resolve(deleteArticleComment(commentId));
+    deleteArticleComment(articleId, commentId) {
+      if (!isArticleExist(articleId)) {
+        throw new Error(`Нет статьи с id: ${articleId}`);
+      }
+
+      deleteArticleComment(commentId);
+      const fullComments = getArticleFullComments(articleId);
+      return Promise.resolve(fullComments);
     },
     addArticleComment(articleId, text) {
-      const article = articles.find((a) => a.id === articleId);
-      if (!article) {
-        throw new Error(`Статьи с таким id не существую`);
+      if (!isArticleExist(articleId)) {
+        throw new Error(`Нет статьи с id: ${articleId}`);
       }
       const newComment = {...makeDraftComment(), text};
       articleToComments.push({articleId, commentId: newComment.id});
       comments.push(newComment);
 
-      return Promise.resolve(comments);
+      const fullComments = getArticleFullComments(articleId);
+      return Promise.resolve(fullComments);
     },
 
     getAllCategories() {
-      return Promise.resolve(categories);
+      const mappedCats = categories.map((el) => el.name);
+      return Promise.resolve(mappedCats);
     },
     getArticleCategories(articleId) {
       return Promise.resolve(getArticleCategories(articleId));
@@ -170,7 +181,7 @@ const createDataBase = () => {
       return Promise.resolve(categories);
     },
     addCategoriesToArticles({categoryId, articleId}) {
-      this.categoriesToArticles.push({categoryId, articleId});
+      categoriesToArticles.push({categoryId, articleId});
     },
 
     search(string) {
@@ -185,15 +196,15 @@ const createDataBase = () => {
       }
 
       const extendedArticles = [];
-      articles.forEach((a) => extendedArticles.push(makeExtendedArticle(a.id)));
+      foundArticles.forEach((a) =>
+        extendedArticles.push(makeExtendedArticle(a.id))
+      );
       return Promise.resolve(extendedArticles);
     },
   };
 };
 
-console.log(`here`);
-const db = createDataBase();
-module.exports = db;
+module.exports = {createDataBase};
 
 // const db = new DataBase();
 // module.exports = db;

@@ -1,67 +1,65 @@
 "use strict";
 const {Router} = require(`express`);
-const Articles = require(`../services/Articles`);
-const articlesCommentsRouter = require(`./articlesComments`);
-const articlesRouter = new Router();
+const {HttpCode} = require(`../../constants/app`);
 
-articlesRouter.use(`/:articleId/comments`, articlesCommentsRouter);
+const createArticlesRouter = ({parent, articlesService}) => {
+  const router = new Router();
+  parent.use(`/articles`, router);
 
-articlesRouter.get(`/`, async (req, res) => {
-  console.log(`/api/articles`);
-  try {
-    const articles = await Articles.getAll();
-    res.send(articles);
-  } catch (e) {
-    res.status(422);
-    res.send(`Error: ${e}`);
-  }
-});
+  router.get(`/`, async (req, res) => {
+    try {
+      const articles = await articlesService.getAll();
+      res.send(articles);
+    } catch (e) {
+      res.status(HttpCode.UNPROCESSABLE_ENTITY);
+      res.send(e);
+    }
+  });
 
-articlesRouter.get(`/:articleId`, async (req, res) => {
-  console.log(`/api/articles/:articleId`);
-  const {articleId} = req.params;
-  try {
-    const article = await Articles.getById(articleId);
-    res.send(article);
-  } catch (e) {
-    res.status(422);
-    res.send(`Error: ${e}`);
-  }
-});
+  router.get(`/:articleId`, async (req, res) => {
+    const {articleId} = req.params;
+    try {
+      const article = await articlesService.getById(articleId);
+      res.send(article);
+    } catch (e) {
+      res.status(HttpCode.UNPROCESSABLE_ENTITY);
+      res.send(e.toString());
+    }
+  });
 
-articlesRouter.post(`/`, async (req, res) => {
-  console.log(`/api/articles`);
-  try {
-    const article = await Articles.addOne({title: `kek`});
-    res.send(article);
-  } catch (e) {
-    res.status(422);
-    res.send(`Error: ${e}`);
-  }
-});
+  router.post(`/`, async (req, res) => {
+    // TODO: need validation
+    try {
+      const article = await articlesService.addOne(req.body);
+      res.send(article);
+    } catch (e) {
+      res.status(HttpCode.UNPROCESSABLE_ENTITY);
+      res.send(e);
+    }
+  });
 
-articlesRouter.put(`/:articleId`, async (req, res) => {
-  console.log(`/api/articles/:articleId`);
-  const {articleId} = req.params;
-  try {
-    const article = await Articles.updateById(articleId, {title: `kek`});
-    res.send(article);
-  } catch (e) {
-    res.status(422);
-    res.send(`Error: ${e}`);
-  }
-});
+  router.put(`/:articleId`, async (req, res) => {
+    // TODO: need validation
+    const {articleId} = req.params;
+    try {
+      const article = await articlesService.updateById(articleId, req.body);
+      res.send(article);
+    } catch (e) {
+      res.status(HttpCode.UNPROCESSABLE_ENTITY);
+      res.send(e);
+    }
+  });
 
-articlesRouter.delete(`/:articleId`, async (req, res) => {
-  console.log(`/api/articles/:articleId`);
-  const {articleId} = req.params;
-  try {
-    const articles = await Articles.removeById(articleId);
-    res.send(articles);
-  } catch (e) {
-    res.status(422);
-    res.send(`Error: ${e}`);
-  }
-});
+  router.delete(`/:articleId`, async (req, res) => {
+    const {articleId} = req.params;
+    try {
+      const articles = await articlesService.removeById(articleId);
+      res.send(articles);
+    } catch (e) {
+      res.status(HttpCode.UNPROCESSABLE_ENTITY);
+      res.send(e);
+    }
+  });
+};
 
-module.exports = articlesRouter;
+module.exports = {createArticlesRouter};

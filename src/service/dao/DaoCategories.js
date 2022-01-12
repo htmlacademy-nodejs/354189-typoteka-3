@@ -1,16 +1,14 @@
 "use strict";
 
-const db = require(`../db/db`);
-
-class DaoCategories {
+module.exports = class DaoCategories {
+  constructor(db) {
+    this.db = db;
+  }
   async getAll() {
     try {
-      return await db.getAllCategories();
+      return await this.db.getAllCategories();
     } catch (e) {
-      console.log(e);
       throw e;
     }
   }
-}
-
-module.exports = new DaoCategories();
+};

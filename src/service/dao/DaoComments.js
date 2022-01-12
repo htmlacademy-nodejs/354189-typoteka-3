@@ -1,32 +1,28 @@
 "use strict";
 
-const db = require(`../db/db`);
-
-class DaoComments {
+module.exports = class DaoComments {
+  constructor(db) {
+    this.db = db;
+  }
   async getAll(articleId) {
     try {
-      return await db.getAllArticleComments(articleId);
+      return await this.db.getArticleComments(articleId);
     } catch (e) {
-      console.log(e);
       throw e;
     }
   }
   async addOne({articleId, text}) {
     try {
-      return await db.addArticleComment(articleId, text);
+      return await this.db.addArticleComment(articleId, text);
     } catch (e) {
-      console.log(e);
       throw e;
     }
   }
   async removeById({articleId, commentId}) {
     try {
-      return await db.deleteArticleComment(articleId, commentId);
+      return await this.db.deleteArticleComment(articleId, commentId);
     } catch (e) {
-      console.log(e);
       throw e;
     }
   }
-}
-
-module.exports = new DaoComments();
+};
