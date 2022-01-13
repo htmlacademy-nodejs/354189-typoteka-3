@@ -17,6 +17,11 @@ const HttpCode = {
   UNPROCESSABLE_ENTITY: 422,
 };
 
+const Env = {
+  DEVELOPMENT: `development`,
+  PRODUCTION: `production`
+};
+
 const CategoryToId = {
   "Деревья": 0,
   "За жизнь": 1,
@@ -35,6 +40,7 @@ module.exports = {
   USER_ARGV_INDEX,
   ExitCode,
   HttpCode,
+  Env,
   CategoryToId,
   API_PREFIX,
 };

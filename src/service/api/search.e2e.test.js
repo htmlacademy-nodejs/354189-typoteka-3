@@ -4,7 +4,7 @@ const request = require(`supertest`);
 
 const {createDataBase} = require(`../db/db`);
 const {DaoArticles} = require(`../dao`);
-const {SearchService} = require(`../services`);
+const {SearchService} = require(`../api-services`);
 const {HttpCode} = require(`../../constants/app`);
 const {createSearchRouter} = require(`./search`);
 

@@ -4,7 +4,7 @@ const request = require(`supertest`);
 
 const {createDataBase} = require(`../db/db`);
 const {DaoCategories} = require(`../dao`);
-const {CategoriesService} = require(`../services`);
+const {CategoriesService} = require(`../api-services`);
 const {HttpCode} = require(`../../constants/app`);
 const {createCategoriesRouter} = require(`./categories`);
 

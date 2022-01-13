@@ -5,7 +5,7 @@ const request = require(`supertest`);
 const {createDataBase} = require(`../db/db`);
 const {DaoComments} = require(`../dao`);
 const {createArticlesCommensRouter} = require(`./articlesComments`);
-const {ArticlesCommentsService} = require(`../services`);
+const {ArticlesCommentsService} = require(`../api-services`);
 const {HttpCode} = require(`../../constants/app`);
 
 const mockData = [
