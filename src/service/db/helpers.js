@@ -52,7 +52,6 @@ const mapAtricles = (articles) => {
     a.comments.forEach((c) => {
       comments.push(c);
       articleToComments.push({commentId: c.id, articleId: a.id});
-      // mappedArticle.comments.push(c.id);
     });
 
     a.category.forEach((category) => {
@@ -62,7 +61,6 @@ const mapAtricles = (articles) => {
         catIds.add(categoryId);
       }
       categoriesToArticles.push({categoryId, articleId: a.id});
-      // mappedArticle.category.push(categoryId);
     });
 
     mappedArticles.push({...a, ...mappedArticle});
