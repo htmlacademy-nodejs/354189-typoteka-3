@@ -1,17 +1,20 @@
 "use strict";
 const {Router} = require(`express`);
-const Categories = require(`../services/Categories`);
-const categoriesRouter = new Router();
 
-categoriesRouter.get(`/`, async (req, res) => {
-  console.log(`/api/categories`);
-  try {
-    const categories = await Categories.getAll();
-    res.send(categories);
-  } catch (e) {
-    res.status(422);
-    res.send(`Error: ${e}`);
-  }
-});
+const createCategoriesRouter = ({parent, categoriesService}) => {
+  const router = new Router();
+  parent.use(`/categories`, router);
 
-module.exports = categoriesRouter;
+  router.get(`/`, async (req, res) => {
+    try {
+      const categories = await categoriesService.getAll();
+      res.send(categories);
+    } catch (e) {
+      res.status(422);
+      res.send(`Error: ${e}`);
+    }
+  });
+};
+
+
+module.exports = {createCategoriesRouter};

@@ -1,11 +1,25 @@
 "use strict";
 
-const articlesRouter = require(`./articles`);
-const categoriesRouter = require(`./categories`);
-const searchRouter = require(`./search`);
+const {createArticlesRouter} = require(`./articles`);
+const {createCategoriesRouter} = require(`./categories`);
+const {createSearchRouter} = require(`./search`);
+const {createArticlesCommensRouter} = require(`./articlesComments`);
+const {Router} = require(`express`);
 
-module.exports = {
-  "/articles": articlesRouter,
-  "/categories": categoriesRouter,
-  "/search": searchRouter,
+const createAppRouter = ({
+  articleCommentsService,
+  articlesService,
+  categoriesService,
+  searchService,
+}) => {
+  const router = new Router();
+
+  createSearchRouter({parent: router, searchService});
+  createCategoriesRouter({parent: router, categoriesService});
+  createArticlesRouter({parent: router, articlesService});
+  createArticlesCommensRouter({parent: router, articleCommentsService});
+
+  return router;
 };
+
+module.exports = {createAppRouter};
