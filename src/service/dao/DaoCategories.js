@@ -5,10 +5,10 @@ module.exports = class DaoCategories {
     this.db = db;
   }
   async getAll() {
-    try {
-      return await this.db.getAllCategories();
-    } catch (e) {
-      throw e;
-    }
+    // try {
+    return await this.db.getAllCategories();
+    // } catch (e) {
+    //   throw e;
+    // }
   }
 };

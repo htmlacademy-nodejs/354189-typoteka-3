@@ -6,10 +6,6 @@ module.exports = class CategoriesService {
   }
 
   async getAll() {
-    try {
-      return await this.daoCategories.getAll();
-    } catch (e) {
-      throw e;
-    }
+    return await this.daoCategories.getAll();
   }
 };

@@ -6,10 +6,6 @@ module.exports = class SearchService {
   }
 
   async search(text) {
-    try {
-      return await this.daoArticles.search(text);
-    } catch (e) {
-      throw e;
-    }
+    return await this.daoArticles.search(text);
   }
 };

@@ -6,24 +6,12 @@ module.exports = class ArticlesCommentsService {
   }
 
   async getAll(articleId) {
-    try {
-      return await this.daoComments.getAll(articleId);
-    } catch (e) {
-      throw e;
-    }
+    return await this.daoComments.getAll(articleId);
   }
   async addOne({articleId, text}) {
-    try {
-      return await this.daoComments.addOne({articleId, text});
-    } catch (e) {
-      throw e;
-    }
+    return await this.daoComments.addOne({articleId, text});
   }
   async removeById({articleId, commentId}) {
-    try {
-      return await this.daoComments.removeById({articleId, commentId});
-    } catch (e) {
-      throw e;
-    }
+    return await this.daoComments.removeById({articleId, commentId});
   }
 };

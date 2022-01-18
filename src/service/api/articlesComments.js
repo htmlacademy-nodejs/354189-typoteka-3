@@ -12,7 +12,7 @@ const createArticlesCommensRouter = ({parent, articleCommentsService}) => {
       const comments = await articleCommentsService.getAll(articleId);
       res.send(comments);
     } catch (e) {
-      res.status(HttpCode.UNPROCESSABLE_ENTITY);
+      res.status(HttpCode.BAD_REQUEST);
       res.send(e);
     }
   });
@@ -27,7 +27,7 @@ const createArticlesCommensRouter = ({parent, articleCommentsService}) => {
       });
       res.send(comments);
     } catch (e) {
-      res.status(HttpCode.UNPROCESSABLE_ENTITY);
+      res.status(HttpCode.BAD_REQUEST);
       res.send(e);
     }
   });
@@ -40,7 +40,7 @@ const createArticlesCommensRouter = ({parent, articleCommentsService}) => {
       const comments = await articleCommentsService.addOne({articleId, text});
       res.send(comments);
     } catch (e) {
-      res.status(HttpCode.UNPROCESSABLE_ENTITY);
+      res.status(HttpCode.BAD_REQUEST);
       res.send(e);
     }
   });

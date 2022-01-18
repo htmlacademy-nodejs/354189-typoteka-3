@@ -7,27 +7,7 @@ const {DaoCategories} = require(`../dao`);
 const {CategoriesService} = require(`../api-services`);
 const {HttpCode} = require(`../../constants/app`);
 const {createCategoriesRouter} = require(`./categories`);
-
-const mockData = [
-  {
-    id: `VjVObb`,
-    title: `Учим HTML и CSS`,
-    announce: `Вы можете достичь всего. Стоит только немного постараться и запастись книгами.`,
-    fullText: `Помните, небольшое количество ежедневных упражнений лучше, чем один раз, но много.`,
-    createdDate: `29-12.2021 23:39:13`,
-    category: [`Без рамки`, `Музыка`, `Кино`],
-    comments: [],
-  },
-  {
-    id: `VjVObb`,
-    title: `Учим HTML и CSS`,
-    announce: `Вы можете достичь всего. Стоит только немного постараться и запастись книгами.`,
-    fullText: `Помните, небольшое количество ежедневных упражнений лучше, чем один раз, но много.`,
-    createdDate: `29-12.2021 23:39:13`,
-    category: [`Кино`],
-    comments: [],
-  },
-];
+const {mockData} = require(`../test-mock/articles`);
 
 describe(`Categories Api`, () => {
   let app;

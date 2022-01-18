@@ -7,25 +7,11 @@ const {DaoComments} = require(`../dao`);
 const {createArticlesCommensRouter} = require(`./articlesComments`);
 const {ArticlesCommentsService} = require(`../api-services`);
 const {HttpCode} = require(`../../constants/app`);
-
-const mockData = [
-  {
-    id: `VjVObb`,
-    title: `Учим HTML и CSS`,
-    announce: `Вы можете достичь всего`,
-    fullText: `Помните, небольшое количество`,
-    createdDate: `29-12.2021 23:39:13`,
-    category: [`Без рамки`, `Музыка`],
-    comments: [
-      {id: `mB5hnR`, text: `Планируете записать видосик?`},
-      {id: `zxczxc`, text: `Хочу такую же футболку :-) te-te-te-te-te-te`},
-    ],
-  },
-];
+const {mockData} = require(`../test-mock/articles`);
 
 describe(`Articles Comments Api`, () => {
-  const ARTICLE_ID = `VjVObb`;
   const FAKE_ID = `fake-id`;
+  const mockArticle = mockData[0];
 
   let app;
   let db;
@@ -45,76 +31,76 @@ describe(`Articles Comments Api`, () => {
   });
 
   const getAll = async (id) => await request(app).get(`/articles/${id}/comments`);
-  const addOne = async (data, articleId = ARTICLE_ID) =>
+  const addOne = async ({data, articleId}) =>
     await request(app).post(`/articles/${articleId}/comments`).send(data);
   const deleteOne = async ({articleId, commentId}) =>
     await request(app).delete(`/articles/${articleId}/comments/${commentId}`);
 
   describe(`Get all article comments`, () => {
+    const articleId = mockArticle.id;
     test(`Response status code 200`, async () => {
-      const {status} = await getAll(ARTICLE_ID);
+      const {status} = await getAll(articleId);
 
       expect(status).toBe(HttpCode.OK);
     });
     test(`Return all acrticles from db`, async () => {
-      const {body} = await getAll(ARTICLE_ID);
+      const {body} = await getAll(articleId);
 
-      expect(body).toEqual([
-        {id: `mB5hnR`, text: `Планируете записать видосик?`},
-        {id: `zxczxc`, text: `Хочу такую же футболку :-) te-te-te-te-te-te`},
-      ]);
+      expect(body).toEqual(mockArticle.comments);
     });
 
     test(`Return erorr if wrong article id`, async () => {
       const {status} = await getAll(FAKE_ID);
 
-      expect(status).toBe(HttpCode.UNPROCESSABLE_ENTITY);
+      expect(status).toBe(HttpCode.BAD_REQUEST);
     });
   });
 
   describe(`Add comment`, () => {
     const NEW_COMMENT = {text: `new comment`};
+    const articleId = mockArticle.id;
 
     test(`Response status code 200`, async () => {
-      const {status} = await addOne(NEW_COMMENT);
+      const {status} = await addOne({data: NEW_COMMENT, articleId});
       expect(status).toBe(HttpCode.OK);
     });
     test(`Return new comment`, async () => {
-      const {body} = await addOne(NEW_COMMENT);
+      const {body} = await addOne({data: NEW_COMMENT, articleId});
 
-      expect(body).toHaveLength(mockData[0].comments.length + 1);
+      expect(body).toHaveLength(mockArticle.comments.length + 1);
       expect(body[body.length - 1]).toEqual(expect.objectContaining(NEW_COMMENT));
     });
     test(`Return erorr if wrong article id`, async () => {
-      const {status} = await addOne(NEW_COMMENT, FAKE_ID);
+      const {status} = await addOne({data: NEW_COMMENT, articleId: FAKE_ID});
 
-      expect(status).toBe(HttpCode.UNPROCESSABLE_ENTITY);
+      expect(status).toBe(HttpCode.BAD_REQUEST);
     });
   });
 
   describe(`Delete comment`, () => {
-    const COMMENT_ID = `mB5hnR`;
+    const articleId = mockArticle.id;
+    const commentId = mockArticle.comments[0].id;
 
     test(`Response status code 200`, async () => {
-      const {status} = await deleteOne({articleId: ARTICLE_ID, commentId: COMMENT_ID});
+      const {status} = await deleteOne({articleId, commentId});
 
       expect(status).toBe(HttpCode.OK);
     });
     test(`Return new comments array`, async () => {
-      const {body} = await deleteOne({articleId: ARTICLE_ID, commentId: COMMENT_ID});
+      const {body} = await deleteOne({articleId, commentId});
 
-      expect(body).toHaveLength(mockData[0].comments.length - 1);
-      expect(body).toEqual(mockData[0].comments.filter((el) => el.id !== COMMENT_ID));
+      expect(body).toHaveLength(mockArticle.comments.length - 1);
+      expect(body).toEqual(mockArticle.comments.filter((el) => el.id !== commentId));
     });
     test(`Return erorr if wrong commment id`, async () => {
-      const {status} = await deleteOne({articleId: ARTICLE_ID, commentId: FAKE_ID});
+      const {status} = await deleteOne({articleId, commentId: FAKE_ID});
 
-      expect(status).toBe(HttpCode.UNPROCESSABLE_ENTITY);
+      expect(status).toBe(HttpCode.BAD_REQUEST);
     });
     test(`Return erorr if wrong article id`, async () => {
-      const {status} = await deleteOne({articleId: FAKE_ID, commentId: COMMENT_ID});
+      const {status} = await deleteOne({articleId: FAKE_ID, commentId});
 
-      expect(status).toBe(HttpCode.UNPROCESSABLE_ENTITY);
+      expect(status).toBe(HttpCode.BAD_REQUEST);
     });
   });
 

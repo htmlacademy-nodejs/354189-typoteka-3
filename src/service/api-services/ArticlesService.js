@@ -6,38 +6,18 @@ module.exports = class ArticlesService {
   }
 
   async getAll() {
-    try {
-      return await this.daoArticles.getAll();
-    } catch (e) {
-      throw e;
-    }
+    return await this.daoArticles.getAll();
   }
   async getById(id) {
-    try {
-      return await this.daoArticles.getById(id);
-    } catch (e) {
-      throw e;
-    }
+    return await this.daoArticles.getById(id);
   }
   async addOne(data) {
-    try {
-      return await this.daoArticles.addOne(data);
-    } catch (e) {
-      throw e;
-    }
+    return await this.daoArticles.addOne(data);
   }
   async updateById(id, data) {
-    try {
-      return await this.daoArticles.updateById(id, data);
-    } catch (e) {
-      throw e;
-    }
+    return await this.daoArticles.updateById(id, data);
   }
   async removeById(id) {
-    try {
-      return await this.daoArticles.removeById(id);
-    } catch (e) {
-      throw e;
-    }
+    return await this.daoArticles.removeById(id);
   }
 };
