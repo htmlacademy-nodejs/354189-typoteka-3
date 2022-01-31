@@ -10,7 +10,7 @@ const searchRouter = require(`./search`);
 
 module.exports = {
   "/": homePageRouter,
-  "/acrticles": articlesRouter,
+  "/articles": articlesRouter,
   "/categories": categoriesRouter,
   "/login": loginRouter,
   "/my": myRouter,

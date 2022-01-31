@@ -187,7 +187,7 @@ const createDataBase = (initialValue) => {
     search(string) {
       const foundArticles = [];
       articles.forEach((a) => {
-        if (a.title.includes(string)) {
+        if (a.title.toLowerCase().includes(string.trim().toLowerCase())) {
           foundArticles.push(a);
         }
       });
