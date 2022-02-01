@@ -21,7 +21,8 @@ const {
 const DEFAULT_PORT = 3000;
 const logger = getLogger();
 const app = express();
-app.use(express.urlencoded({extended: false}));
+// app.use(express.urlencoded({extended: false}));
+app.use(express.json());
 
 const runServer = async (port) => {
   let initialData = null;

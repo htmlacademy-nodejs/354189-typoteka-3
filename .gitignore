@@ -17,3 +17,6 @@ build/
 
 # Моки
 *mocks.json
+
+# Загруженные файлы
+upload/

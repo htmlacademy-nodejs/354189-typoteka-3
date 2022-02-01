@@ -7,9 +7,13 @@ const routersMap = require(`./routes`);
 
 const DEFAULT_PORT = process.env.PORT || 3000;
 const PUBLIC_DIR = `public`;
+const UPLOAD_DIR = `upload`;
 
 const app = express();
+app.use(express.urlencoded({extended: false}));
+
 app.use(express.static(path.join(__dirname, PUBLIC_DIR)));
+app.use(express.static(path.resolve(__dirname, UPLOAD_DIR)));
 
 app.set(`views`, path.join(__dirname, `./templates`));
 app.set(`view engine`, `pug`);
