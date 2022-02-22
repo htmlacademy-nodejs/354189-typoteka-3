@@ -10,10 +10,10 @@ CREATE DATABASE typoteka_dev
     CONNECTION LIMIT = -1;
 
 /* create tables */
-DROP TABLE IF EXISTS articles;
-DROP TABLE IF EXISTS comments;
-DROP TABLE IF EXISTS categories;
 DROP TABLE IF EXISTS categories_articles;
+DROP TABLE IF EXISTS categories;
+DROP TABLE IF EXISTS comments;
+DROP TABLE IF EXISTS articles;
 
 CREATE TABLE articles(
   id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
