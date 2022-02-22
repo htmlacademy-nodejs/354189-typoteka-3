@@ -18,7 +18,7 @@ const {
   SearchService,
 } = require(`../api-services`);
 
-const DEFAULT_PORT = 3000;
+const DEFAULT_PORT = 3003;
 const logger = getLogger();
 const app = express();
 // app.use(express.urlencoded({extended: false}));
