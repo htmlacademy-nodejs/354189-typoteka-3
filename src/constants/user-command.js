@@ -3,6 +3,7 @@
 const UserCommand = {
   HELP: `--help`,
   GENERATE: `--generate`,
+  FILL: `--fill`,
   VERSION: `--version`,
   SERVER: `--server`,
 };
