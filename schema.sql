@@ -14,13 +14,27 @@ DROP TABLE IF EXISTS categories_articles;
 DROP TABLE IF EXISTS categories;
 DROP TABLE IF EXISTS comments;
 DROP TABLE IF EXISTS articles;
+DROP TABLE IF EXISTS users;
+
+CREATE TABLE users(
+  id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  first_name text NOT NULL,
+  last_name text NOT NULL,
+  email text NOT NULL,
+  password text NOT NULL,
+  avatar text NOT NULL
+);
 
 CREATE TABLE articles(
   id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   title text NOT NULL,
   announce text NOT NULL,
   full_text text NOT NULL,
-  created_at timestamp DEFAULT current_timestamp
+  user_id integer NOT NULL,
+  created_at timestamp DEFAULT current_timestamp,
+  FOREIGN KEY (user_id) REFERENCES users(id)
+    ON DELETE SET NULL
+    ON UPDATE SET NULL
 );
 CREATE TABLE categories(
   id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
@@ -36,6 +50,7 @@ CREATE TABLE comments(
     ON DELETE CASCADE
     ON UPDATE CASCADE
 );
+
 CREATE TABLE categories_articles(
   category_id integer NOT NULL,
   article_id integer NOT NULL,
