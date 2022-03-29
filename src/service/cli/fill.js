@@ -19,6 +19,16 @@ const MAX_COMMENTS_SENTENCES = 5;
 const MAX_COMMENTS_COUNT = 5;
 const FILE_NAME = `fill-db.sql`;
 
+const makeMockUsers = (count = 3) =>
+  new Array(count).fill(undefined).map((_, index) => ({
+    id: index + 1,
+    firstName: `testFirstName-${index}`,
+    lastName: `testLastNmae-${index}`,
+    email: `testEmail${index}@mail.ru`,
+    password: `testPassword${index}`,
+    avatar: `avatar${index}.jpg`,
+  }));
+
 const readContent = async (filePath) => {
   try {
     const content = await fs.readFile(filePath, `utf8`);
@@ -44,7 +54,14 @@ const generageArticleComments = (comments, articleId) =>
     text: shuffle(comments).slice(MAX_COMMENTS_SENTENCES).join(` `),
   }));
 
-const generateArticles = ({count, titles, categories, sentences, comments}) =>
+const generateArticles = ({
+  count,
+  titles,
+  categories,
+  sentences,
+  comments,
+  users,
+}) =>
   Array(count)
     .fill({})
     .map((_, index) => ({
@@ -54,16 +71,24 @@ const generateArticles = ({count, titles, categories, sentences, comments}) =>
       fullText: shuffle(sentences).slice(MAX_ANNOUNCE_SENTENCES).join(` `),
       category: generateCategories(categories, index + 1),
       comments: generageArticleComments(comments, index + 1),
+      userId: users[getRandomInt(0, users.length - 1)].id,
     }));
 
-const generateSqlContent = (articles, categories) => {
+const generateSqlContent = (articles, categories, user) => {
   const articlesComments = articles.flatMap((a) => a.comments);
   const articlesCategories = articles.flatMap((a) => a.category);
 
+  const userValues = user
+    .map(
+        ({firstName, lastName, password, avatar, email}) =>
+          `('${firstName}', '${lastName}', '${email}', '${password}', '${avatar}')`
+    )
+    .join(`,\n`);
+
   const articleValues = articles
     .map(
-        ({title, announce, fullText}) =>
-          `('${title}', '${announce}', '${fullText}')`
+        ({title, announce, fullText, userId}) =>
+          `('${title}', '${announce}', '${fullText}', '${userId}')`
     )
     .join(`,\n`);
 
@@ -80,7 +105,9 @@ const generateSqlContent = (articles, categories) => {
     .join(`,\n`);
 
   return `
-  INSERT INTO articles(title, announce, full_text) VALUES
+  INSERT INTO users(first_name, last_name, email, password, avatar) VALUES
+  ${userValues};
+  INSERT INTO articles(title, announce, full_text, user_id) VALUES
   ${articleValues};
   INSERT INTO comments(text, article_id) VALUES
   ${articlesCommentsValues};
@@ -104,6 +131,7 @@ module.exports = {
     const titles = await readContent(FILE_TITLES_PATH);
     const categories = await readContent(FILE_CATEGORIES_PATH);
     const comments = await readContent(FILE_COMMENTS_PATH);
+    const users = makeMockUsers(5);
 
     const categoriesWithId = categories.map((cat, index) => ({
       name: cat,
@@ -117,9 +145,10 @@ module.exports = {
       categories: categoriesWithId,
       sentences,
       comments,
+      users,
     });
 
-    const content = generateSqlContent(articles, categoriesWithId);
+    const content = generateSqlContent(articles, categoriesWithId, users);
 
     try {
       await fs.writeFile(FILE_NAME, content);
